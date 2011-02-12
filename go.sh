@@ -44,11 +44,11 @@ output () {
   cat $p/reprs/*.fasta > $1.fasta
 }
 
-init
+#init
 
-label_join
+#label_join
 
-cluster
+#cluster
 
 filter
 
