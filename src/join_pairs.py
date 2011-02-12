@@ -15,6 +15,7 @@ seq = { 0: '', 1: ''}
 i = 0
 
 infile = sys.argv[1]
+label = sys.argv[2]
 
 with open(infile) as handle:
     for line in handle:
@@ -22,7 +23,7 @@ with open(infile) as handle:
             n = c.next()
             i += 1
             if n == 1:
-                print '>%s' % hex(i)[2:]
+                print '>%s:%s' % (label, hex(i)[2:])
         else:
             seq[n] += line.strip()
             if n == 1:
