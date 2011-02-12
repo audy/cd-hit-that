@@ -16,27 +16,22 @@ label_join () {
     for file in $p/*.fasta
     do
       echo "Labelling and joining $file"
+      rm -f $p/joined/joined.fasta
       mkdir -p joined/$i
-      cat $file | python src/labels.py > $p/joined/$(basename $file)
-    done
+      python src/join_pairs.py $file >> $p/joined/joined.fasta
+    done    
 }
 
 cluster () {
   # Cluster joined reads with CDHIT
-    for file in $p/joined/*.fasta
-    do
-      echo "Clustering $file"
-      sh src/run_cdhit.sh $file $p/clusters/$(basename $file)
-    done
+  echo "clustering"
+  sh src/run_cdhit.sh $p/joined/joined.fasta $p/clusters/$(basename $file)
 }
 
 filter () {
   # Filter out rep. reads that belong to clusters only consting of themself
-  for file in $p/clusters/*.fasta
-  do
-    echo "Filtering singletons from $file, cutoff = $CUTOFF"
-    python src/filter.py $file $file.clstr $CUTOFF $LABEL > $p/reprs/$(basename $file)
-  done
+  echo "Filtering [cutoff = $CUTOFF]"
+  python src/filter.py $p/clusters/joined.fasta $p/clusters/joined.fasta.clstr $CUTOFF $LABEL > $p/reprs/representatives.fasta
 }
 
 output () {
@@ -44,11 +39,11 @@ output () {
   cat $p/reprs/*.fasta > $1.fasta
 }
 
-#init
+init
 
-#label_join
+label_join
 
-#cluster
+cluster
 
 filter
 
