@@ -29,3 +29,6 @@ with open(sys.argv[1]) as handle:
                 print '>%s' % label
         elif keep:
             print line.strip()
+            
+for cluster in counts:
+    print >> sys.stderr, "%s, %s" % (cluster, counts[cluster])
