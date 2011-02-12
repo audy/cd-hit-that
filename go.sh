@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CUTOFF=10
+CUTOFF=1
 p=$1
 LABEL=$2
 echo $p
