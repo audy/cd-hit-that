@@ -1,37 +1,42 @@
 #!/bin/bash
 
 CUTOFF=10
+reads=$1
+out=$2
+
+echo $reads $out $CUTOFF
 
 init () {
-  mkdir -p clusters
-  mkdir -p joined
-  mkdir -p reprs
+  mkdir -p $out/clusters
+  mkdir -p $out/joined
+  mkdir -p $out/reprs
 }
 
 label_join () {
   # Label and join reads
-  for file in reads/*.txt
-  do
-    echo "Labelling and joining $file"
-    cat $file | python join_pairs.py > joined/$(basename $file).fa
-  done
+    for file in reads/*.txt
+    do
+      echo "Labelling and joining $file"
+      mkdir -p joined/$i
+      cat $file | python labels.py $i > $out/joined/$(basename $file).fa
+    done
 }
 
 cluster () {
   # Cluster joined reads with CDHIT
-  for file in joined/*.txt
-  do
-    echo "Clustering $file"
-    sh run_cdhit.sh $file clusters/$(basename $file)
-  done
+    for file in $out/joined/*.txt
+    do
+      echo "Clustering $file"
+      sh run_cdhit.sh $file $out/clusters/$(basename $file)
+    done
 }
 
 filter () {
   # Filter out rep. reads that belong to clusters only consting of themself
-  for file in clusters/*.txt
+  for file in $out/clusters/*.txt
   do
     echo "Filtering singletons from $file, cutoff = $CUTOFF"
-    python filter.py $file $file.clstr $CUTOFF > reprs/$(basename $file)
+    python filter.py $file $file.clstr $CUTOFF > $out/reprs/$(basename $file)
   done
 }
 init
