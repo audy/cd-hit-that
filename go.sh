@@ -2,6 +2,12 @@
 
 CUTOFF=10
 
+init () {
+  mkdir -p clusters
+  mkdir -p joined
+  mkdir -p reprs
+}
+
 label_join () {
   # Label and join reads
   for file in reads/*
@@ -29,8 +35,8 @@ filter () {
   done
 }
 
- label_join
+label_join
 
- cluster
+cluster
 
- filter
+filter
