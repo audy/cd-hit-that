@@ -40,6 +40,7 @@ filter () {
 }
 
 output () {
+  echo $p/reprs/*.fasta
   cat $p/reprs/*.fasta > $1.fasta
 }
 
