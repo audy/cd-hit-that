@@ -6,9 +6,12 @@ LABEL=$2
 echo $p
 
 init () {
-  mkdir -p $p/clusters
-  mkdir -p $p/joined
-  mkdir -p $p/reprs
+  for p in N P
+  do
+    mkdir -p $p/clusters
+    mkdir -p $p/joined
+    mkdir -p $p/reprs
+  done
 }
 
 label_join () {
