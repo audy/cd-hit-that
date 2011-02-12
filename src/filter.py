@@ -32,4 +32,4 @@ with open(sys.argv[1]) as handle:
             
 for cluster in counts:
     if len(counts[cluster]) > cutoff:
-        print >> sys.stderr, "%s, %s" % (cluster, len(counts[cluster]))
+        print >> sys.stderr, "%s\t%s" % (cluster[1:], len(counts[cluster]))
