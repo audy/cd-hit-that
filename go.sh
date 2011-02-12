@@ -2,7 +2,7 @@
 
 CUTOFF=10
 p=$1
-label=$2
+LABEL=$2
 echo $p
 
 init () {
@@ -35,7 +35,7 @@ filter () {
   for file in $p/clusters/*.fasta
   do
     echo "Filtering singletons from $file, cutoff = $CUTOFF"
-    python src/filter.py $file $file.clstr $CUTOFF > $p/reprs/$(basename $file)
+    python src/filter.py $file $file.clstr $CUTOFF $LABEL > $p/reprs/$(basename $file)
   done
 }
 
