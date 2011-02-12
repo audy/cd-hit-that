@@ -1,35 +1,30 @@
 import sys
+from collections import defaultdict
 
-reads = sys.argv[1]
-cluster_file = sys.argv[2]
+clust_file = sys.argv[2]
+fasta_file = sys.argv[2]
 cutoff = int(sys.argv[3])
-label = sys.argv[4]
 
-# Count number of clusters
+# count clusters
 counts = {}
-reads_to_clust = {}
-with open(sys.argv[2]) as handle:
+read_to_clust = {}
+with open(clust_file) as handle:
     for line in handle:
         if line.startswith('>'):
-            cluster = line.strip()
-            counts[cluster] = set()
+            cluster = line[1:-1]
+            counts[cluster] = defaultdict(int)
         else:
-            read = line.split()[2].rstrip('.')
-            counts[cluster].add(read)
-            reads_to_clust[read] = cluster
+            line = line.split()
+            group = line[2][1:].rstrip('.').split(':')[0]
+            counts[cluster][group] += 1
+            read_to_clust[line[2].rstrip('.')] = cluster
             
-with open(sys.argv[1]) as handle:
+# Print out representatives
+
+with open(fasta_file) as handle:
     for line in handle:
         if line.startswith('>'):
-            keep = False
-            read = line.strip()
-            cluster = reads_to_clust[read]
-            if len(counts[cluster]) > cutoff:
-                keep = True
-                print '>%s' % label
-        elif keep:
-            print line.strip()
-            
-for cluster in counts:
-    if len(counts[cluster]) > cutoff:
-        print >> sys.stderr, "%s\t%s" % (cluster[1:], len(counts[cluster]))
+            group, read = line.strip().split(':')
+            cluster = read_to_clust[read]
+            count = counts[cluster][group]
+            print >> sys.stderr, "%s\t%s" % (cluster, count)

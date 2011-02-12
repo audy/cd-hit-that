@@ -2,7 +2,6 @@
 
 CUTOFF=1
 p=$1
-LABEL=$2
 echo $p
 
 init () {
@@ -40,7 +39,7 @@ cluster () {
 filter () {
   # Filter out rep. reads that belong to clusters only consting of themself
   echo "Filtering [cutoff = $CUTOFF]"
-  python src/filter.py clusters.fasta clusters.fasta.clstr $CUTOFF $LABEL > representatives.fasta
+  python src/filter.py clusters.fasta clusters.fasta.clstr $CUTOFF > representatives.fasta
 }
 
 init
