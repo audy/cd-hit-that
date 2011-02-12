@@ -13,17 +13,17 @@ init () {
 
 label_join () {
   # Label and join reads
-    for file in $p/reads/*.txt
+    for file in $p/*.fasta
     do
       echo "Labelling and joining $file"
       mkdir -p joined/$i
-      cat $file | python labels.py > $p/joined/$(basename $file).fa
+      cat $file | python labels.py > $p/joined/$(basename $file)
     done
 }
 
 cluster () {
   # Cluster joined reads with CDHIT
-    for file in $p/joined/*.txt
+    for file in $p/joined/*.fasta
     do
       echo "Clustering $file"
       sh run_cdhit.sh $file $p/clusters/$(basename $file)
@@ -32,7 +32,7 @@ cluster () {
 
 filter () {
   # Filter out rep. reads that belong to clusters only consting of themself
-  for file in $p/clusters/*.txt
+  for file in $p/clusters/*.fasta
   do
     echo "Filtering singletons from $file, cutoff = $CUTOFF"
     python filter.py $file $file.clstr $CUTOFF > $p/reprs/$(basename $file)
