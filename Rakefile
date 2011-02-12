@@ -1,6 +1,8 @@
 task :default => ['src/cdhit/cd-hit-est'] 
 
-file 'src/cdhit/cd-hit-est' do
+directory 'src/cdhit' { }
+
+file 'src/cdhit/cd-hit-est' => 'src/cdhit' do
   puts 'Building CD-HIT'
   sh 'curl -LO http://www.bioinformatics.org/download.php/cd-hit/cd-hit-v4.3-2010-10-25.tgz'
   sh 'tar -zxvf cd-hit-v4.3-2010-10-25.tgz'
