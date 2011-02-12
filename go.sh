@@ -17,7 +17,7 @@ label_join () {
     do
       echo "Labelling and joining $file"
       mkdir -p joined/$i
-      cat $file | python labels.py > $p/joined/$(basename $file)
+      cat $file | python src/labels.py > $p/joined/$(basename $file)
     done
 }
 
@@ -26,7 +26,7 @@ cluster () {
     for file in $p/joined/*.fasta
     do
       echo "Clustering $file"
-      sh run_cdhit.sh $file $p/clusters/$(basename $file)
+      sh src/run_cdhit.sh $file $p/clusters/$(basename $file)
     done
 }
 
@@ -35,7 +35,7 @@ filter () {
   for file in $p/clusters/*.fasta
   do
     echo "Filtering singletons from $file, cutoff = $CUTOFF"
-    python filter.py $file $file.clstr $CUTOFF > $p/reprs/$(basename $file)
+    python src/filter.py $file $file.clstr $CUTOFF > $p/reprs/$(basename $file)
   done
 }
 
