@@ -25,18 +25,13 @@ label_join () {
 cluster () {
   # Cluster joined reads with CDHIT
   echo "clustering"
-  sh src/run_cdhit.sh $p/joined/joined.fasta $p/clusters/$(basename $file)
+  sh src/run_cdhit.sh $p/joined/joined.fasta $p/clusters/clusters.fasta
 }
 
 filter () {
   # Filter out rep. reads that belong to clusters only consting of themself
   echo "Filtering [cutoff = $CUTOFF]"
-  python src/filter.py $p/clusters/joined.fasta $p/clusters/joined.fasta.clstr $CUTOFF $LABEL > $p/reprs/representatives.fasta
-}
-
-output () {
-  echo $p/reprs/*.fasta
-  cat $p/reprs/*.fasta > $1.fasta
+  python src/filter.py $p/clusters/clusters.fasta $p/clusters/clusters.fasta.clstr $CUTOFF $LABEL > $p/reprs/representatives.fasta
 }
 
 init
@@ -46,5 +41,3 @@ label_join
 cluster
 
 filter
-
-output
