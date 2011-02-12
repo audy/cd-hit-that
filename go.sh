@@ -18,7 +18,7 @@ label_join () {
     do
       echo "Labelling and joining $file"
       mkdir -p joined/$i
-      cat $file | python labels.py $i > $out/joined/$(basename $file).fa
+      cat $file | python labels.py > $out/joined/$(basename $file).fa
     done
 }
 

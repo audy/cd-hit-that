@@ -16,7 +16,12 @@ i = 0
 
 for line in sys.stdin:
     if line.startswith('>'):
+        n = c.next()
         i += 1
-        print '>%s' % hex(i)[2:]
+        if n == 1:
+            print '>%s' % hex(i)[2:]
     else:
-        print line.strip()
+        seq[n] += line.strip()
+        if n == 1:
+            print '%s%s' % (seq[1][::-1], seq[0])
+            seq = { 0: '', 1: ''}
