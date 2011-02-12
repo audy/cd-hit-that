@@ -2,7 +2,7 @@
 
 CUTOFF=10
 p=$1
-
+label=$2
 echo $p
 
 init () {
@@ -39,6 +39,10 @@ filter () {
   done
 }
 
+output () {
+  cat $p/reprs/*.fasta > $1.fasta
+}
+
 init
 
 label_join
@@ -46,3 +50,5 @@ label_join
 cluster
 
 filter
+
+output

@@ -3,6 +3,7 @@ import sys
 reads = sys.argv[1]
 cluster_file = sys.argv[2]
 cutoff = int(sys.argv[3])
+label = sys.argv[4]
 
 # Count number of clusters
 counts = {}
@@ -25,6 +26,6 @@ with open(sys.argv[1]) as handle:
             cluster = reads_to_clust[read]
             if len(counts[cluster]) > cutoff:
                 keep = True
-                print line.strip()
+                print '>%s' % label
         elif keep:
             print line.strip()
