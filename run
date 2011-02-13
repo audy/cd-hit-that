@@ -1,8 +1,7 @@
 #!/bin/bash
 
-CUTOFF=1
+CUTOFF=$2
 p=$1
-echo $p
 
 init () {
   for p in N P
@@ -20,7 +19,7 @@ label_join () {
     for file in $p/*.fasta
     do
       echo "Labelling and joining $file"
-      rm -f $p/joined/joined.fasta
+      rm -f joined/joined.fasta
       mkdir -p joined/$i
       python src/join_pairs.py $file $p >> $p/joined/joined.fasta
     done
@@ -39,7 +38,7 @@ cluster () {
 filter () {
   # Filter out rep. reads that belong to clusters only consting of themself
   echo "Filtering [cutoff = $CUTOFF]"
-  python src/filter.py clusters.fasta clusters.fasta.clstr $CUTOFF > representatives.fasta
+  python src/filter.py clusters.fasta.clstr clusters.fasta $CUTOFF > reps.fasta
 }
 
 init
