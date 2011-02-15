@@ -9,6 +9,9 @@ import sys
 import os
 from itertools import cycle
 
+import string
+_complement = string.maketrans('GATCRYgatcry','CTAGYRctagyr')
+
 c = cycle([0, 1])
 seq = { 0: '', 1: ''}
 
@@ -27,5 +30,9 @@ with open(infile) as handle:
         else:
             seq[n] += line.strip()
             if n == 1:
-                print '%s%s' % (seq[1][::-1], seq[0])
+                # Reverse-complement 3' pair
+                seq[1] = seq[1].translate(_complement)[::-1]
+                
+                print '%s%s' % (, seq[0])
+                
                 seq = { 0: '', 1: ''}

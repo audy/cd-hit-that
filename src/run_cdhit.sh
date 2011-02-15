@@ -1,10 +1,10 @@
-sim=95
+sim=$1
 cdhit_overhang=0.78
 wordsize=10
 cores=16
 cdhit='./src/cdhit/cd-hit-est'
-input=$1
-output=$2
+input=$2
+output=$3
 
 $cdhit \
   -i $input \
@@ -13,4 +13,4 @@ $cdhit \
   -n $wordsize \
   -T $cores \
   -s 0.$cdhit_overhang \
-  > /dev/null
+  -M 0 

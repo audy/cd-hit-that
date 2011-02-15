@@ -1,6 +1,6 @@
 task :default => ['src/cdhit/cd-hit-est'] 
 
-directory 'src/cdhit' { }
+directory 'src/cdhit'
 
 file 'src/cdhit/cd-hit-est' => 'src/cdhit' do
   puts 'Building CD-HIT'
@@ -8,9 +8,11 @@ file 'src/cdhit/cd-hit-est' => 'src/cdhit' do
   sh 'tar -zxvf cd-hit-v4.3-2010-10-25.tgz'
   cd 'cd-hit-v4.3-2010-10-25'
   sh 'make openmp=yes'
+  end
+file 'asdf' do
   mkdir '../src/cdhit/'
   sh 'mv cd-hit-est ../src/cdhit/'
   cd '..'
-  sh 'rm -r cd-hit-v4.3-2010-10-25'
+#  sh 'rm -r cd-hit-v4.3-2010-10-25'
   sh 'rm cd-hit-v4.3-2010-10-25.tgz'
 end
