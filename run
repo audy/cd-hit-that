@@ -1,47 +1,39 @@
 #!/bin/bash
 set -e
-CUTOFF=$1
-ID=$2
+DIR=$1
+CUTOFF=$2
+ID=$3
 
 echo "CUTOFF = $CUTOFF"
 echo "ID = $ID"
 
 init () {
-  for p in N P
-  do
-    mkdir -p $p/clusters
-    mkdir -p $p/joined
-    mkdir -p $p/reprs
-  done
+  mkdir -p $DIR/clusters
+  mkdir -p $DIR/joined
+  mkdir -p $DIR/reprs
 }
 
 label_join () {
   # Label and join reads
-  for p in N P
-  do
     for file in $p/*.fasta
     do
       echo "Labelling and joining $file"
-      rm -f joined/joined_$ID.fasta
-      mkdir -p joined/$i
-      python src/join_pairs.py $file $p >> $p/joined/joined_$ID.fasta
+      rm -f $DIR/joined/joined.fasta
+      python src/join_pairs.py $file $p >> DIR/joined/joined.fasta
     done
   done
-  
-  cat P/joined/joined_$ID.fasta N/joined/joined_$ID.fasta > both_$ID.fasta
-  
 }
 
 cluster () {
   # Cluster joined reads with CDHIT
   echo "clustering"
-  sh src/run_cdhit.sh $ID both_$ID.fasta clusters_$ID.fasta > clusters_$ID.txt
+  sh src/run_cdhit.sh $ID both.fasta clusters_$ID.fasta > clusters_$ID.txt
 }
 
 filter () {
   # Filter out rep. reads that belong to clusters only consting of themself
   echo "Filtering [cutoff = $CUTOFF]"
-  python src/filter.py clusters_$ID.fasta.clstr clusters_$ID.fasta $CUTOFF > reps_$ID.fasta
+  python src/filter.py clusters_$ID.fasta.clstr clusters_$ID.fasta $CUTOFF
 }
 
 init

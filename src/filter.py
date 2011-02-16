@@ -5,43 +5,39 @@ clust_file = sys.argv[1]
 fasta_file = sys.argv[2]
 cutoff = int(sys.argv[3])
 
-# count clusters
-counts = {}
-read_to_clust = {}
+# Read CLUST File
+
+counts = defaultdict(dict)
+
 with open(clust_file) as handle:
     for line in handle:
         if line.startswith('>'):
-            cluster = line[1:-1]
-            counts[cluster] = defaultdict(int)
+            cluster = int(line[1:-1].split()[1])
         else:
-            line = line.split()
-            group = line[2][1:].rstrip('.').split(':')[0]
-            counts[cluster][group] += 1
-            read_to_clust[line[2].rstrip('.')[1:].split(':')[1]] = cluster
-            
-
-# Print counts
-for cluster in counts:
-    if not ((counts[cluster]['N'] > cutoff) and (counts[cluster]['P'] > cutoff)):
-        continue
-    for group in ('N', 'P'):
-        if group in counts[cluster]:
-            print >> sys.stderr, "%s\t%s\t%s" % (group, cluster.split()[1], counts[cluster][group])
-        else:
-            print >> sys.stderr, "%s\t%s\t%s" % (group, cluster.split()[1], 0)
-        
-
-# Print out representatives
-with open(fasta_file) as handle:
-    for line in handle:
-        if line.startswith('>'):
-            keep = False
-            group, read = line.strip().split(':')
-            cluster = read_to_clust[read]
-            if not ((counts[cluster]['N'] > cutoff) and (counts[cluster]['P'] > cutoff)):
-                continue
+            header = line.split()[2].lstrip('>').rstrip('.')
+            barcode, read = header.split(':')
+            barcode = int(barcode)
+            if cluster in counts:
+                if barcode in counts[cluster]:
+                    counts[cluster][barcode] += 1
+                else:
+                    counts[cluster][barcode] = 1
             else:
-                keep = True
-                print '>%s Group_%s' % (cluster, group[1:])
-        elif keep:
-            print line.strip()
+                counts[cluster] = {}
+                
+# Print table headers
+print "-\t",
+for barcode in sorted(counts[counts.keys()[0]]):
+    print "%s\t" % barcode,
+print ''
+
+# Print table values
+for cluster in counts:
+    print "%s\t" % cluster,
+    for barcode in sorted(counts[counts.keys()[0]]):
+        try:
+            print "%s\t" % counts[cluster][barcode],
+        except KeyError:
+            print "0\t",
+    print ''
+print ''
