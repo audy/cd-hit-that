@@ -1,12 +1,16 @@
-# CDHIT Thing
+# CD-HIT That
 
-To run, do this:
+- Run CDHIT on a buncha files. Oh yeah, they're paired-end 
+- Create a table of sequences per cluster per file
+- Input data is paired-end, interleaved, FASTA reads which are joined together with their 5' ends touching and clustered.
 
-    ./run <cutoff>
-    
-Where cutoff is the minimum number of reads required for a cluster to be reported.
+# Usage:
 
-A tab-separated sheet containing cluster, group (negative or positive), and reads for that cluster and group will be printed to STDOUT.
+- Reads go in `data/` and have to be in FASTA format
+- Filenames need to have a number in them between a `_` and `.`. For example: `reads_blah_blah_033.fasta`. This is for the column header in the output table (it will be `33`). It goes without saying that this number should be unique.
 
-A fasta file `reps.fasta` containing representative reads will be generated.
+To change parameters such has similarity requirement, edit the Rakefile.
 
+The table will be saved as `counts.txt`
+
+Type `rake clean` to start over.

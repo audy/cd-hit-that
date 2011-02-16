@@ -1,12 +1,15 @@
-require 'rake/clean'
-
-CLEAN.include('out', 'counts.txt')
-
+# Settin's
 sim = 0.95
 
+# Codes
+require 'rake/clean'
+CLEAN.include('out', 'counts.txt')
+CLOBBER.include('src/cdhit', 'out', 'counts.txt')
+
 desc 'Cluster a bunch of reads'
+
 task :default => 'counts.txt' do
-  
+  puts "CD-HIT That!"
 end
 
 directory 'out' do
@@ -19,7 +22,7 @@ file 'counts.txt' => 'out/clusters.txt' do
     out/clusters.fasta 1 > counts.txt"
 end
 
-file 'out/clusters.txt' => ['out/joined.fasta', 'src/cdhit/cd-hit-est' do
+file 'out/clusters.txt' => ['out/joined.fasta', 'src/cdhit/cd-hit-est'] do
   sh "./src/cdhit/cd-hit-est \
     -i out/joined.fasta \
     -o out/clusters.fasta \
@@ -38,15 +41,17 @@ file 'out/joined.fasta' => 'out' do
 end
 
 desc 'Download & Compile cd-hit-est'
-file 'src/cdhit/cd-hit-est' => 'src/cdhit' do
-  puts 'Building CD-HIT'
-  sh 'curl -LO http://www.bioinformatics.org/download.php/cd-hit/cd-hit-v4.3-2010-10-25.tgz'
-  sh 'tar -zxvf cd-hit-v4.3-2010-10-25.tgz'
-  cd 'cd-hit-v4.3-2010-10-25'
-  sh 'make openmp=yes'
-  mkdir '../src/cdhit/'
-  sh 'mv cd-hit-est ../src/cdhit/'
-  cd '..'
-  sh 'rm -r cd-hit-v4.3-2010-10-25'
-  sh 'rm cd-hit-v4.3-2010-10-25.tgz'
-end
+namespace :cdhit do
+  # This is messy
+  file 'src/cdhit/cd-hit-est' do
+    sh 'curl -LO http://www.bioinformatics.org/download.php/cd-hit/cd-hit-v4.3-2010-10-25.tgz'
+    sh 'tar -zxvf cd-hit-v4.3-2010-10-25.tgz'
+    cd 'cd-hit-v4.3-2010-10-25'
+    sh 'make openmp=yes'
+    mkdir '../src/cdhit/'
+    sh 'mv cd-hit-est ../src/cdhit/'
+    cd '..'
+    sh 'rm -r cd-hit-v4.3-2010-10-25'
+    sh 'rm cd-hit-v4.3-2010-10-25.tgz'
+  end
+end 
