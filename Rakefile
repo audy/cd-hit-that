@@ -1,4 +1,5 @@
 # Settin's
+
 sim = 0.95
 
 # Codes
@@ -23,6 +24,7 @@ file 'counts.txt' => 'out/clusters.txt' do
 end
 
 file 'out/clusters.txt' => ['out/joined.fasta', 'src/cdhit/cd-hit-est'] do
+  puts "cluster at #{sim}%"
   sh "./src/cdhit/cd-hit-est \
     -i out/joined.fasta \
     -o out/clusters.fasta \
@@ -31,6 +33,7 @@ file 'out/clusters.txt' => ['out/joined.fasta', 'src/cdhit/cd-hit-est'] do
     -T 16 \
     -s 0.78 \
     -M 0 \
+    -b #{100-sim*100} \
     > out/clusters.txt"
 end
 
