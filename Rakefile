@@ -19,7 +19,8 @@ end
 
 desc 'Cluster at num%'
 task :cluster, :num do |t, args|
-  sim = args.num
+  sim = args.num # set sim
+  Rake.application.invoke_task(:default)
 end
 
 directory 'out' do
