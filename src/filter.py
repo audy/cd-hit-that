@@ -40,7 +40,6 @@ for cluster in counts:
             val = counts[cluster][barcode]
         except KeyError:
             val = '0'
-            print >> sys.stderr, "%s, %s" % (cluster, barcode)
         print "%s\t" % val,
     print ''
 print ''
