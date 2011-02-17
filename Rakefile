@@ -2,22 +2,21 @@
 require 'rake'
 
 # Settin's
-sim = 0.8
+sim = 80
 
-puts "Sim = #{sim}"
+puts "Sim = #{sim}%"
 
 # Codes
 require 'rake/clean'
 CLEAN.include('out', 'counts.txt')
 CLOBBER.include('src/cdhit', 'out', 'counts.txt')
 
-counts = "counts_#{(sim*100).to_i}.txt"
-clusters = "out/clusters_#{(sim*100).to_i}.txt"
-
-puts clusters
+counts = "counts_#{sim}.txt"
+clusters = "out/clusters_#{sim}"
+representatives = "out/representatives_#{sim}.fasta"
 
 desc 'Cluster a bunch of reads'
-task :default => counts do
+task :default => [counts, representatives] do
   puts "CD-HIT That!"
 end
 
@@ -26,22 +25,32 @@ directory 'out' do
 end
 
 file counts => clusters do
+  # Make table
   sh "python src/filter.py \
-    out/clusters.fasta.clstr \
-    out/clusters.fasta 1 > #{counts}"
+    #{clusters}.clstr \
+    #{clusters} 1 > #{counts}"
+end
+
+file representatives => clusters do
+  # Re-label representative sequences
+  sh "python src/fix_headers.py \
+    #{clusters}.clstr \
+    #{clusters} \
+    > out/representatives_#{sim}.fasta"
 end
 
 file clusters => ['out/joined.fasta', 'src/cdhit/cd-hit-est'] do
   puts "cluster at #{sim}%"
+ 
   cmd = "./src/cdhit/cd-hit-est \
     -i out/joined.fasta \
-    -o out/clusters.fasta \
-    -c #{sim} \
+    -o #{clusters} \
+    -c 0.#{sim} \
     -n 10 \
     -T 16 \
     -M 0 \
     -b #{100-sim*100} \
-    > #{clusters}"
+    > /dev/null"
 
   sh cmd do |okay|
     if not okay

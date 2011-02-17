@@ -1,4 +1,4 @@
-src/*
 data/*
 out/*
 count*.txt
+src/cdhit/*
