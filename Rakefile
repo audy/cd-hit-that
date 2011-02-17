@@ -1,10 +1,7 @@
 #!/usr/bin/env ruby
 require 'rake'
 
-# Settin's
-sim = 95
-
-puts "Sim = #{sim}%"
+sim = 80 # Default, 
 
 # Codes
 require 'rake/clean'
@@ -15,9 +12,14 @@ counts = "counts_#{sim}.txt"
 clusters = "out/clusters_#{sim}"
 representatives = "out/representatives_#{sim}.fasta"
 
-desc 'Cluster a bunch of reads'
+desc "Cluster at 80%"
 task :default => [counts, representatives] do
   puts "CD-HIT That!"
+end
+
+desc 'Cluster at num%'
+task :cluster, :num do |t, args|
+  sim = args.num
 end
 
 directory 'out' do
