@@ -1,10 +1,10 @@
 #!/usr/bin/env ruby
 require 'rake'
 
-
 # Settin's
+sim = 0.8
 
-sim = 0.80
+puts "Sim = #{sim}"
 
 # Codes
 require 'rake/clean'
@@ -12,6 +12,9 @@ CLEAN.include('out', 'counts.txt')
 CLOBBER.include('src/cdhit', 'out', 'counts.txt')
 
 counts = "counts_#{(sim*100).to_i}.txt"
+clusters = "out/clusters_#{(sim*100).to_i}.txt"
+
+puts clusters
 
 desc 'Cluster a bunch of reads'
 task :default => counts do
@@ -22,13 +25,13 @@ directory 'out' do
   mkdir 'out'
 end
 
-file counts => 'out/clusters.txt' do
+file counts => clusters do
   sh "python src/filter.py \
     out/clusters.fasta.clstr \
     out/clusters.fasta 1 > #{counts}"
 end
 
-file 'out/clusters.txt' => ['out/joined.fasta', 'src/cdhit/cd-hit-est'] do
+file clusters => ['out/joined.fasta', 'src/cdhit/cd-hit-est'] do
   puts "cluster at #{sim}%"
   cmd = "./src/cdhit/cd-hit-est \
     -i out/joined.fasta \
@@ -38,11 +41,11 @@ file 'out/clusters.txt' => ['out/joined.fasta', 'src/cdhit/cd-hit-est'] do
     -T 16 \
     -M 0 \
     -b #{100-sim*100} \
-    > out/clusters.txt"
+    > #{clusters}"
 
   sh cmd do |okay|
     if not okay
-      rm 'out/clusters.txt'
+      rm clusters
     end
   end
 
@@ -69,5 +72,3 @@ namespace :cdhit do
     sh 'rm cd-hit-v4.3-2010-10-25.tgz'
   end
 end 
-
-Rake.application.invoke_task(:default)
