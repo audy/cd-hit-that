@@ -2,7 +2,7 @@
 require 'rake'
 
 # Settin's
-sim = 80
+sim = 95
 
 puts "Sim = #{sim}%"
 
@@ -49,7 +49,7 @@ file clusters => ['out/joined.fasta', 'src/cdhit/cd-hit-est'] do
     -n 10 \
     -T 16 \
     -M 0 \
-    -b #{100-sim*100} \
+    -b #{100-sim} \
     > /dev/null"
 
   sh cmd do |okay|
