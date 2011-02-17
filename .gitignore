@@ -1,5 +1,4 @@
-clusters/*
-reads/*
-joined/*
-reprs/*
 src/*
+data/*
+out/*
+count*.txt
