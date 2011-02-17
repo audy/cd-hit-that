@@ -1,15 +1,16 @@
 # Settin's
 
-sim = 0.95
+sim = 0.80
 
 # Codes
 require 'rake/clean'
 CLEAN.include('out', 'counts.txt')
 CLOBBER.include('src/cdhit', 'out', 'counts.txt')
 
-desc 'Cluster a bunch of reads'
+counts = "counts_#{(sim*100).to_i}.txt"
 
-task :default => 'counts.txt' do
+desc 'Cluster a bunch of reads'
+task :default => counts do
   puts "CD-HIT That!"
 end
 
@@ -17,24 +18,30 @@ directory 'out' do
   mkdir 'out'
 end
 
-file 'counts.txt' => 'out/clusters.txt' do
+file counts => 'out/clusters.txt' do
   sh "python src/filter.py \
     out/clusters.fasta.clstr \
-    out/clusters.fasta 1 > counts.txt"
+    out/clusters.fasta 1 > #{counts}"
 end
 
 file 'out/clusters.txt' => ['out/joined.fasta', 'src/cdhit/cd-hit-est'] do
   puts "cluster at #{sim}%"
-  sh "./src/cdhit/cd-hit-est \
+  cmd = "./src/cdhit/cd-hit-est \
     -i out/joined.fasta \
     -o out/clusters.fasta \
     -c #{sim} \
     -n 10 \
     -T 16 \
-    -s 0.78 \
     -M 0 \
     -b #{100-sim*100} \
     > out/clusters.txt"
+
+  sh cmd do |okay|
+    if not okay
+      rm 'out/clusters.txt'
+    end
+  end
+
 end
 
 file 'out/joined.fasta' => 'out' do
