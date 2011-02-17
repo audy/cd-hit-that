@@ -1,3 +1,7 @@
+#!/usr/bin/env ruby
+require 'rake'
+
+
 # Settin's
 
 sim = 0.80
@@ -65,3 +69,5 @@ namespace :cdhit do
     sh 'rm cd-hit-v4.3-2010-10-25.tgz'
   end
 end 
+
+Rake.application.invoke_task(:default)
