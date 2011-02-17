@@ -24,6 +24,7 @@ with open(clust_file) as handle:
                     counts[cluster][barcode] = 1
             else:
                 counts[cluster] = {}
+                counts[cluster][barcode] = 1
 
 # Print table headers
 barcodes = max(counts.values(), key=len).keys()
