@@ -20,6 +20,9 @@ end
 desc 'Cluster at num%'
 task :cluster, :num do |t, args|
   sim = args.num # set sim
+  counts = "counts_#{sim}.txt"
+  clusters = "out/clusters_#{sim}"
+  representatives = "out/representatives_#{sim}.fasta"
   Rake.application.invoke_task(:default)
 end
 
