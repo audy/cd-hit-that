@@ -2,3 +2,4 @@ data/*
 out/*
 count*.txt
 src/cdhit/*
+.DS_Store
