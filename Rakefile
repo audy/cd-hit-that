@@ -1,36 +1,38 @@
 #!/usr/bin/env ruby
 require 'rake'
 
-sim = 80 # Default, 
+SIM = 99 # Default, 
+CUTOFF = 5000 # Reads per cluster (total)
+MIN_READ_LEN = 70 # bases
 
 # Codes
 require 'rake/clean'
 CLEAN.include('out', 'counts.txt')
 CLOBBER.include('src/cdhit', 'out', 'counts.txt')
 
-counts = "counts_#{sim}.txt"
-clusters = "out/clusters_#{sim}"
-representatives = "out/representatives_#{sim}.fasta"
-
-desc "Cluster at 80%"
-task :default => [counts, representatives] do
-  puts "CD-HIT That!"
-end
+counts = "counts_#{SIM}.txt"
+clusters = "out/clusters_#{SIM}"
+representatives = "out/representatives_#{SIM}.fasta"
 
 desc 'Cluster at num%'
 task :cluster, :num do |t, args|
-  sim = args.num # set sim
-  counts = "counts_#{sim}.txt"
-  clusters = "out/clusters_#{sim}"
-  representatives = "out/representatives_#{sim}.fasta"
+  SIM = args.num # set SIM
+  counts = "counts_#{SIM}.txt"
+  clusters = "out/clusters_#{SIM}"
+  representatives = "out/representatives_#{SIM}.fasta"
   Rake.application.invoke_task(:default)
+end
+
+desc "Cluster at #{SIM}%"
+task :default => [counts, representatives] do
+  puts "CD-HIT That!"
 end
 
 directory 'out' do
   mkdir 'out'
 end
 
-file counts => clusters do
+file counts => [clusters, representatives] do
   # Make table
   sh "python src/filter.py \
     #{clusters}.clstr \
@@ -41,21 +43,21 @@ file representatives => clusters do
   # Re-label representative sequences
   sh "python src/fix_headers.py \
     #{clusters}.clstr \
-    #{clusters} \
-    > out/representatives_#{sim}.fasta"
+    #{clusters} #{CUTOFF} \
+    > out/representatives_#{SIM}.fasta"
 end
 
 file clusters => ['out/joined.fasta', 'src/cdhit/cd-hit-est'] do
-  puts "cluster at #{sim}%"
+  puts "cluster at #{SIM}%"
  
   cmd = "./src/cdhit/cd-hit-est \
     -i out/joined.fasta \
     -o #{clusters} \
-    -c 0.#{sim} \
+    -c 0.#{SIM} \
     -n 10 \
     -T 16 \
     -M 0 \
-    -b #{100-sim} \
+    -b #{100-SIM} \
     > /dev/null"
 
   sh cmd do |okay|
@@ -68,7 +70,7 @@ end
 
 file 'out/joined.fasta' => 'out' do
   Dir.glob('data/*.fasta').each do |file|
-    sh "python src/join_pairs.py #{file} >> out/joined.fasta"
+    sh "python src/join_pairs.py #{file} #{MIN_READ_LEN} >> out/joined.fasta"
   end
 end
 
