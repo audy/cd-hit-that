@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require 'rake'
 
-SIM = 99 # Default, 
+SIM = 40 # Default, 
 CUTOFF = 5000 # Reads per cluster (total)
 MIN_READ_LEN = 70 # bases
 
@@ -57,7 +57,6 @@ file clusters => ['out/joined.fasta', 'src/cdhit/cd-hit-est'] do
     -n 10 \
     -T 16 \
     -M 0 \
-    -b #{100-SIM} \
     > /dev/null"
 
   sh cmd do |okay|
@@ -70,7 +69,7 @@ end
 
 file 'out/joined.fasta' => 'out' do
   Dir.glob('data/*.fasta').each do |file|
-    sh "python src/join_pairs.py #{file} #{MIN_READ_LEN} >> out/joined.fasta"
+    sh "python src/join_label.py #{file} >> out/joined.fasta"
   end
 end
 
