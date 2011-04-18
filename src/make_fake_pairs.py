@@ -19,3 +19,5 @@ with open(fn) as handle:
             print ">%s" % line.split(';')[-1].strip()
         else:
             sequence.append(line.strip())
+s =  "%s%s" % (reverse, forward)
+print s
