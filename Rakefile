@@ -73,7 +73,7 @@ end
 
 file 'out/joined.fasta' => 'out' do
   Dir.glob(Reads_Glob).each do |file|
-    sh 'rm out/joined.fasta'
+    sh 'rm -f out/joined.fasta'
     sh "python src/join_pairs.py #{file} #{MIN_READ_LEN} >> out/joined.fasta"
   end
 end
