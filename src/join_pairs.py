@@ -48,4 +48,4 @@ with open(infile) as handle:
                 seq = { 0: '', 1: ''}
 
 
-print >> sys.stderr, "kept: %.2f percent of pairs" % (float(kept)/(skipped + kept))
+print >> sys.stderr, "kept: %.2f percent of pairs (%s : %s)" % (float(kept)/(skipped + kept), skipped, kept)

@@ -1,58 +1,61 @@
 #!/usr/bin/env ruby
 require 'rake'
 
+Reads_Glob = 'data/*.fasta'
+Output = 'out'
+
 SIM = 99 # Default, 
 CUTOFF = 5000 # Reads per cluster (total)
 MIN_READ_LEN = 70 # bases
+
+Counts = "counts_#{SIM}.txt"
+Clusters = "out/clusters_#{SIM}"
+Representatives = "out/representatives_#{SIM}.fasta"
 
 # Codes
 require 'rake/clean'
 CLEAN.include('out', 'counts.txt')
 CLOBBER.include('src/cdhit', 'out', 'counts.txt')
 
-counts = "counts_#{SIM}.txt"
-clusters = "out/clusters_#{SIM}"
-representatives = "out/representatives_#{SIM}.fasta"
-
 desc 'Cluster at num%'
 task :cluster, :num do |t, args|
   SIM = args.num # set SIM
-  counts = "counts_#{SIM}.txt"
-  clusters = "out/clusters_#{SIM}"
-  representatives = "out/representatives_#{SIM}.fasta"
+  Counts = "counts_#{SIM}.txt"
+  Clusters = "out/clusters_#{SIM}"
+  Representatives = "out/representatives_#{SIM}.fasta"
   Rake.application.invoke_task(:default)
 end
 
 desc "Cluster at #{SIM}%"
-task :default => [counts, representatives] do
+task :default => [Counts, Representatives] do
   puts "CD-HIT That!"
 end
 
-directory 'out' do
-  mkdir 'out'
+directory Output do
+  mkdir Output
 end
 
-file counts => [clusters, representatives] do
+file Counts => [Clusters, Representatives] do
   # Make table
   sh "python src/filter.py \
-    #{clusters}.clstr \
-    #{clusters} 1 > #{counts}"
+    #{Clusters}.clstr \
+    #{Clusters} 1 > #{Counts}"
 end
 
-file representatives => clusters do
+file Representatives => Clusters do
   # Re-label representative sequences
   sh "python src/fix_headers.py \
-    #{clusters}.clstr \
-    #{clusters} #{CUTOFF} \
+    #{Clusters}.clstr \
+    #{Clusters} #{CUTOFF} \
     > out/representatives_#{SIM}.fasta"
 end
 
-file clusters => ['out/joined.fasta', 'src/cdhit/cd-hit-est'] do
+file Clusters => ['out/joined.fasta', 'src/cdhit/cd-hit-est'] do
   puts "cluster at #{SIM}%"
  
   cmd = "./src/cdhit/cd-hit-est \
     -i out/joined.fasta \
-    -o #{clusters} \
+    -o #{Clusters} \
     -c 0.#{SIM} \
     -n 10 \
     -T 16 \
@@ -62,14 +65,15 @@ file clusters => ['out/joined.fasta', 'src/cdhit/cd-hit-est'] do
 
   sh cmd do |okay|
     if not okay
-      rm clusters
+      rm Clusters
     end
   end
 
 end
 
 file 'out/joined.fasta' => 'out' do
-  Dir.glob('data/*.fasta').each do |file|
+  Dir.glob(Reads_Glob).each do |file|
+    sh 'rm out/joined.fasta'
     sh "python src/join_pairs.py #{file} #{MIN_READ_LEN} >> out/joined.fasta"
   end
 end
