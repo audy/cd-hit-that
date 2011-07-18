@@ -1,10 +1,10 @@
 #!/usr/bin/env ruby
 require 'rake'
 
-Reads_Glob = 'data/*.fasta'
+Reads_Glob = 'data/*'
 Output = 'out'
 
-SIM = 99 # Default, 
+SIM = 80 # Default, 
 CUTOFF = 5000 # Reads per cluster (total)
 MIN_READ_LEN = 70 # bases
 
