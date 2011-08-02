@@ -19,7 +19,7 @@ CLOBBER.include('src/cdhit', 'out', 'counts.txt')
 
 desc 'Cluster at num%'
 task :cluster, :num do |t, args|
-  SIM = args.num # set SIM
+  SIM = args.num.to_i # set SIM
   Counts = "counts_#{SIM}.txt"
   Clusters = "out/clusters_#{SIM}"
   Representatives = "out/representatives_#{SIM}.fasta"
@@ -72,8 +72,8 @@ file Clusters => ['out/joined.fasta', 'src/cdhit/cd-hit-est'] do
 end
 
 file 'out/joined.fasta' => 'out' do
+  sh 'rm -f out/joined.fasta'
   Dir.glob(Reads_Glob).each do |file|
-    sh 'rm -f out/joined.fasta'
     sh "python src/join_pairs.py #{file} #{MIN_READ_LEN} >> out/joined.fasta"
   end
 end
